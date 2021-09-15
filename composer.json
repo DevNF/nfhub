@@ -1,0 +1,19 @@
+{
+    "name": "nfhub/common",
+    "description": "Biblioteca base para comunicaçao com a API do NFHub",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jefferson Moreira",
+            "email": "jeematheus@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NFHub\\Common\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
