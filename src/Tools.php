@@ -436,12 +436,17 @@ class Tools
      * @access public
      * @return array
      */
-    public function buscaConfigContador(int $company_id, array $params = []): array
+    public function buscaConfigContador(int $company_id, string $cpfcnpj_contador_id, array $params = []): array
     {
         try {
             $params = array_filter($params, function($item) {
                 return $item['name'] !== 'company_id';
             }, ARRAY_FILTER_USE_BOTH);
+
+            $params[] = [
+                'name' => 'cpfcnpj',
+                'value' => $cpfcnpj_contador_id
+            ];
 
             $params[] = [
                 'name' => 'company_id',
