@@ -562,6 +562,102 @@ class Tools
         }
     }
 
+     /**
+     * Função responsável por listar os bancos cadastrados de cada empresa no Easy
+     *
+     * @param array $params Parametros adicionais para a requisição
+     * @param int $company_id ID da empresa
+     * @param string $cpfcnpj CNPJ da empresa
+     *
+     * @access public
+     * @return array
+     */
+    public function listaBancos(int $company_id, string $cpfcnpj, string $filter, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $params[] = [
+                'name' => 'cpfcnpj',
+                'value' => $cpfcnpj
+            ];
+
+            $params[] = [
+                'name' => 'company_id',
+                'value' => $company_id
+            ];
+
+            $params[] = [
+                'name' => 'filter',
+                'value' => $filter
+            ];
+
+            $dados = $this->get('list-banks', $params);
+
+            if (!isset($dados['body']->message)) {
+                return $dados;
+            }
+
+            throw new Exception($dados['body']->message, 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    /**
+     * Função responsável por listar as categorias de cada empresa no Easy
+     *
+     * @param array $params Parametros adicionais para a requisição
+     * @param int $company_id ID da empresa
+     * @param string $cpfcnpj CNPJ da empresa
+     * @param string $filter Filtro
+     * @param int $id ID da categoria
+     *
+     * @access public
+     * @return array
+     */
+    public function listaCategorias(int $company_id, string $cpfcnpj, string $filter, int $id = null, array $params = []): array
+
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $params[] = [
+                'name' => 'cpfcnpj',
+                'value' => $cpfcnpj
+            ];
+
+            $params[] = [
+                'name' => 'company_id',
+                'value' => $company_id
+            ];
+
+            $params[] = [
+                'name' => 'filter',
+                'value' => $filter
+            ];
+
+            $params[] = [
+                'name' => 'id',
+                'value' => $id
+            ];
+
+            $dados = $this->get('categories', $params);
+
+            if (!isset($dados['body']->message)) {
+                return $dados;
+            }
+
+            throw new Exception($dados['body']->message, 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Execute a GET Request
      *
