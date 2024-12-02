@@ -658,6 +658,34 @@ class Tools
         }
     }
 
+    public function buscaCertificadoPem(int $certificate_id, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $params[] = [
+                'name' => 'certificate_id',
+                'value' => $certificate_id
+            ];
+
+            $dados = $this->get("certificates/{$certificate_id}/pem", $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Execute a GET Request
      *
