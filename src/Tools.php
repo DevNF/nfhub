@@ -686,6 +686,56 @@ class Tools
         }
     }
 
+    public function consultaIntegrationTokenDominio(string $token, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $body = [
+                'integration_key' => $token
+            ];
+
+            $dados = $this->post("dominio/customer/verify", $body, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    public function salvaIntegrationTokenDominio(array $dados, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $dados = $this->post("dominio/customer", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Execute a GET Request
      *
