@@ -736,6 +736,29 @@ class Tools
         }
     }
 
+    public function enviaBaixasParaDominio(array $dados, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $dados = $this->post("dominio/customer/send-invoices-payments", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Execute a GET Request
      *
