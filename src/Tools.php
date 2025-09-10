@@ -267,6 +267,81 @@ class Tools
     }
 
     /**
+     * Busca uma unidade de negocio no NFHub
+     */
+    public function buscaUnidadeNegocio(int $company_id, int $business_unit_id, array $params = []): array
+    {
+        try {
+            $params = array_filter($params, function($item) {
+                return $item['name'] !== 'company_id';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $params[] = [
+                'name' => 'company_id',
+                'value' => $company_id
+            ];
+
+            $dados = $this->get('companies/'.$company_id.'/business-units/'.$business_unit_id, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    /**
+     * Atualiza ou cria uma unidade de negocio no NFHub
+     */
+    public function atualizeUnidadeNegocio(int $id, array $dados, array $params = []): array
+    {
+        try {
+            $dados = $this->put('companies/'.$id.'/business-units', $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    /**
+     * Remove uma unidade de negocio no NFHub
+     */
+    public function removeUnidadeNegocio(int $company_id, int $business_unit_id, array $params = []): array
+    {
+        try {
+            $dados = $this->delete('companies/'.$company_id.'/business-units/'.$business_unit_id, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    /**
      * Função responsável por listar os clientes de uma empresa
      *
      * @param int $company_id ID da empresa que será listado os clientes
