@@ -833,6 +833,43 @@ class Tools
             throw new Exception($error, 1);
         }
     }
+    public function transacoesOpenFinancePorPeriodo(string $company_cnpj, array $params = []): array
+    {
+        $headers = [
+            "company-cnpj: $company_cnpj",
+        ];
+
+        try {
+            $dados = $this->get("openfinance/extract", $params, $headers);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    public function consultaSaldo(string $company_cnpj, array $params = []): array
+    {
+        $headers = [
+            "company-cnpj: $company_cnpj",
+        ];
+
+        try {
+            $dados = $this->get("openfinance/balance", $params, $headers);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+
+        return $dados;
+    }
 
     /**
      * Execute a GET Request
