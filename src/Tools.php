@@ -856,7 +856,7 @@ class Tools
         }
     }
 
-    public function consultaSaldo(string $company_cnpj, array $params = []): array
+    public function consultaSaldoOpenFinance(string $company_cnpj, array $params = []): array
     {
         $headers = [
             "company-cnpj: $company_cnpj",
