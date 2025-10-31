@@ -2,6 +2,7 @@
 
 namespace NFHub\Common;
 
+use CURLFile;
 use Exception;
 
 /**
@@ -833,6 +834,91 @@ class Tools
             throw new Exception($error, 1);
         }
     }
+
+    /**
+     * Gera arquivo remessa de pagamento
+     */
+    public function geraRemessaPagamento(int $company_id, array $dados, array $params = [])
+    {
+        if (empty($company_id)) {
+            throw new Exception("Não é possível gerar o arquivo remessa de pagamento sem o ID da empresa", 1);
+        }
+
+        if (!isset($dados['installments']) || empty($dados['installments'])) {
+            throw new Exception("Não é possível gerar o arquivo remessa sem o id de pelo menos um pagamento", 1);
+        }
+
+        $dados['company_id'] = $company_id;
+
+        try {
+            $dados = $this->post('payments/remittance', $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->message)) {
+                throw new Exception($dados['body']->message, 1);
+            }
+
+            foreach ($dados['body']->errors as $key => $error) {
+                if (strpos($key, 'position') !== false) {
+                    $errors[] = implode('; ', $error);
+                } else {
+                    $errors[] = $error;
+                }
+            }
+
+            throw new Exception("\r\n".implode("\r\n", $errors), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    /**
+     * Processa arquivo retorno de pagamento
+     */
+    public function processaRetornoPagamento(int $company_id, array $dados, array $file, array $params = [])
+    {
+        if (empty($company_id)) {
+            throw new Exception("Não é possível processar o arquivo retorno sem o ID da empresa", 1);
+        }
+
+        if (!isset($file['path']) || empty($file['path']) || !isset($file['type']) || empty($file['type']) || !isset($file['name']) || empty($file['name'])) {
+            throw new Exception("Não é possível processar o arquivo retorno sem o caminho, tipo ou nome do mesmo", 1);
+        }
+
+        $dados['company_id'] = $company_id;
+
+        try {
+            $cfile = new CURLFile($file['path'], $file['type'], $file['name']);
+            $dados['return'] = $cfile;
+
+            $this->setUpload(true);
+            $dados = $this->post('payments/return', $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->message)) {
+                throw new Exception($dados['body']->message, 1);
+            }
+
+            foreach ($dados['body']->errors as $key => $error) {
+                if (strpos($key, 'position') !== false) {
+                    $errors[] = implode('; ', $error);
+                } else {
+                    $errors[] = $error;
+                }
+            }
+
+            throw new Exception("\r\n".implode("\r\n", $errors), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
 
     /**
      * Execute a GET Request
