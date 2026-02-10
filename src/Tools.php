@@ -872,6 +872,63 @@ class Tools
         return $dados;
     }
 
+    public function AtualizaSaldoInicialOpenFinance(array $dados, array $params = []): array
+    {
+        try {
+            $dados = $this->post("openfinance/update-initial-balance", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    public function RecalculaSaldoOpenFinance(array $dados, array $params = []): array
+    {
+        try {
+            $dados = $this->post("openfinance/recalculate-balance", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    public function DeletaRestauraTransacoesOpenFinance(array $dados, array $params = []): array
+    {
+        try {
+            $dados = $this->post("openfinance/delete-restore-transactions", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Gera arquivo remessa de pagamento
      */
