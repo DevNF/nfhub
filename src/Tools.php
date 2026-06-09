@@ -948,6 +948,52 @@ class Tools
         }
     }
 
+    public function cartoesCreditoOpenFinance(string $company_cnpj, array $params = []): array
+    {
+        $headers = [
+            "company-cnpj: $company_cnpj",
+        ];
+
+        try {
+            $dados = $this->get("openfinance/credit-cards", $params, $headers);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
+    public function faturaCartaoOpenFinance(string $company_cnpj, array $params = []): array
+    {
+        $headers = [
+            "company-cnpj: $company_cnpj",
+        ];
+
+        try {
+            $dados = $this->get("openfinance/credit-card/extract", $params, $headers);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Gera arquivo remessa de pagamento
      */
@@ -1206,6 +1252,8 @@ class Tools
 
         curl_setopt($curlC, CURLOPT_URL, $url);
         curl_setopt($curlC, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlC, CURLOPT_TIMEOUT, 300);
+        curl_setopt($curlC, CURLOPT_CONNECTTIMEOUT, 30);
         if (!empty($dados)) {
             curl_setopt($curlC, CURLOPT_POSTFIELDS, json_encode($dados));
         }
