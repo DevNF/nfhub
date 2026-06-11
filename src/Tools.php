@@ -994,6 +994,29 @@ class Tools
         }
     }
 
+    public function deletarRestaurarTransacoesCartaoOpenFinance(string $company_cnpj, array $dados, array $params = []): array
+    {
+        $headers = [
+            "company-cnpj: $company_cnpj",
+        ];
+
+        try {
+            $dados = $this->post("openfinance/credit-card/delete-restore-transactions", $dados, $params, $headers);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     /**
      * Gera arquivo remessa de pagamento
      */
