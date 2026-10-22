@@ -929,6 +929,30 @@ class Tools
         }
     }
 
+    /**
+     * Revoga o vínculo Open Finance da conta para que possa ser vinculada de novo
+     *
+     * @param array $dados ['account_id' => int, 'company_id' => int]
+     */
+    public function RevogaOpenFinance(array $dados, array $params = []): array
+    {
+        try {
+            $dados = $this->post("openfinance/revoke", $dados, $params);
+
+            if ($dados['httpCode'] == 200) {
+                return $dados;
+            }
+
+            if (isset($dados['body']->errors)) {
+                throw new \Exception(implode("\r\n", $dados['body']->errors), 1);
+            }
+
+            throw new Exception(json_encode($dados), 1);
+        } catch (Exception $error) {
+            throw new Exception($error, 1);
+        }
+    }
+
     public function IgnoraRestauraTransacoesOpenFinance(array $dados, array $params = []): array
     {
         try {
